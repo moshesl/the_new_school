@@ -90,7 +90,6 @@ def remove_stu(num):
     return stu_delete
 
 
-
 # moshe = ('moshe', 987654321, '1900-16-04', 8)
 # yakov = ('Yakov', 304499932, '1980-05-12')
 # add_stu(*moshe)
