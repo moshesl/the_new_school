@@ -11,10 +11,10 @@ def welcome_message():
     return jsonify('Welcome: Welcome to our school')
 
 
-@app.route('/?username', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def login():
-    username = request.args.get('username')
-    password = request.args.get('password')
+# @app.route('/?username', methods=['GET', 'POST', 'PUT', 'DELETE'])
+# def login():
+#     username = request.args.get('username')
+#     password = request.args.get('password')
 
 
 @app.route('/students/',methods=['GET', 'POST'])
