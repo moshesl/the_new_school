@@ -1,3 +1,5 @@
+import json
+import school_module, temp_school_db_module
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
@@ -8,6 +10,7 @@ app.secret_key = 'password'
 def welcome_message():
     return jsonify('Welcome: Welcome to our school')
 
+
 @app.route('/?username', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def login():
     username = request.args.get('username')
@@ -17,11 +20,18 @@ def login():
 @app.route('/students/',methods=['GET', 'POST'])
 def all_the_students():
     # מחזיר שמות כל התלמידים ת"ז וכיתה
-    if request.methods == 'GET':
-        pass
+    if request.method == 'GET':
+        lst = temp_school_db_module.get_all_stu()
+        return jsonify(lst)
+        # return jsonify(lst)
     # מוסיף תלמיד למערכת
-    if request.methods == 'POST':
-        pass
+    if request.method == 'POST':
+        json_dict = json.loads(request.form)
+        name = json_dict['name']
+        t_z = json_dict['t_z']
+        class_ = json_dict['class']
+        birthday = json_dict['birthday']
+        return school_module.add_student([name, t_z, class_, birthday])
     pass
 
 
@@ -31,9 +41,14 @@ def all_the_students():
 #     pass
 
 
-@app.route('/students/<int:stu_id>/',methods=['GET'])
-def get_years_student(stu_id):
+@app.route('/students/<int:stu_id>/',methods=['GET', 'PUT'])
+def get_student(stu_id):
     #     מחזיר את רשימת שנות לימודיו של אותו תלמיד
+    if request.method == 'GET':
+        lst = school_module.get_years_student(stu_id)
+        return jsonify(lst)
+    if request.method == 'PUT':
+        pass
     pass
 
 
