@@ -1,8 +1,12 @@
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
-app.secret_key = 'pass'
+app.secret_key = 'password'
 
+
+@app.route('/')
+def welcome_message():
+    return jsonify('Welcome: Welcome to our school')
 
 @app.route('/?username', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def login():
@@ -10,16 +14,21 @@ def login():
     password = request.args.get('password')
 
 
-@app.route('/students/',methods=['GET'])
-def get_all_students():
+@app.route('/students/',methods=['GET', 'POST'])
+def all_the_students():
     # מחזיר שמות כל התלמידים ת"ז וכיתה
+    if request.methods == 'GET':
+        pass
+    # מוסיף תלמיד למערכת
+    if request.methods == 'POST':
+        pass
     pass
 
 
-@app.route('/students/',methods=['POST'])
-def add_student(name, t_z, class_):
-    #     מוסיף תלמיד למסד נתונים ומחזיר את המילים WHELCOM
-    pass
+# @app.route('/students/',methods=['POST'])
+# def add_student(name, t_z, class_):
+#     #     מוסיף תלמיד למסד נתונים ומחזיר את המילים WHELCOM
+#     pass
 
 
 @app.route('/students/<int:stu_id>/',methods=['GET'])
@@ -81,32 +90,36 @@ def get_avg_by_sub(stu_id, year, sub_id):
     pass
 
 
-@app.route('/students/<int:stu_id>/<int:year>/<int:sub_id>/<int:test_id>/', methods=['GET'])
-def get_subs_test(stu_id, year, sub_id):
+@app.route('/students/<int:stu_id>/<int:year>/<int:sub_id>/<int:test_id>/', methods=['GET', 'POST'])
+def stu_by_year_sub_test(stu_id, year, sub_id):
     # מחזיר מבחן ספציפי
+    if request.methods == 'GET':
+        pass
+    if request.methods == 'POST':
+        pass
     pass
 
 
-@app.route('/students/<int:stu_id>/<int:year>/<int:sub_id>/<int:test_id>/', methods=['POST'])
-def post_test_by_sub(stu_id, year, sub_id, test_id):
-    # מוסיף מבחן ספציפי
-    pass
+# @app.route('/students/<int:stu_id>/<int:year>/<int:sub_id>/<int:test_id>/', methods=[])
+# def post_test_by_sub(stu_id, year, sub_id, test_id):
+#     # מוסיף מבחן ספציפי
+#     pass
 
 
 @app.route('/students/<int:stu_id>/<int:year>/<int:sub_id>/<int:test_id>/', methods=['PUT'])
-def get_subs_test(stu_id, year, sub_id, test_id):
+def get_subjects_test(stu_id, year, sub_id, test_id):
     # מעדכן מבחן ספציפי
     pass
 
 
 @app.route('/students/<int:stu_id>/<int:year>/<int:sub_id>/', methods=['GET'])
-def get_avg_by_sub(stu_id, year):
+def get_avg_by_subject(stu_id, year):
     # מחזיר רשימת מקצועות שאותו תלמיד למד
     pass
 
 
 @app.route('/students/<int:stu_id>/<ray_of_years>/', methods=['GET'])
-def get_subject(stu_id,*year):
+def get_all_subjects_of_stu(stu_id):
     # מחזיר רשימת מקצועות וה ID שלהם לפי רישמת השנים בצורה כזאת: 2016,2015,2014
     pass
 
@@ -123,9 +136,14 @@ def get_all_subs_avg(stu_id):
     pass
 
 
-@app.route('/students/<int:stu_id>/all_years/<int:sub_id>/', methods=['GET'])
-def get_avg_by_sub(stu_id, sub_id):
+@app.route('/students/<int:stu_id>/all_years/<int:sub_id>/', methods=['GET', 'POST'])
+def subject_by_stu_all_years(stu_id, sub_id):
     #  מחזיר את הממוצע של מקצוע מסויים לאורך כל השנים
+    if request.methods == 'GET':
+        pass
+    # ?
+    if request.methods == 'POST':
+        pass
     pass
 
 
@@ -140,6 +158,10 @@ def update_stu_by_sub(stu_id, sub_id):
     pass
 
 
-@app.route('/teacher/')
+@app.route('/teachers/')
 def teacher():
     pass
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
