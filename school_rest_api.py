@@ -1,5 +1,5 @@
 import json
-import school_module, temp_school_db_module
+import temp_school_db_module
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
@@ -37,8 +37,8 @@ def students():
 def student(stu_id):
     #     מחזיר את רשימת שנות לימודיו של אותו תלמיד
     if request.method == 'GET':
-        lst = school_module.get_years_student(stu_id)
-        return jsonify(lst[0])
+        lst = temp_school_db_module.get_students_year(stu_id)
+        return jsonify(lst)
     # מסיר תלמיד
     if request.method == 'DELETE':
         return jsonify(temp_school_db_module.remove_stu(stu_id))
@@ -59,59 +59,58 @@ def get_subjects_by_year(stu_id, year):
     return jsonify(fetch)
 
 
-@app.route('/students/<int:stu_id>/<int:year>/<int:sub_id>/', methods=['GET'])
-def get_test():
+@app.route('/students/<int:stu_id>/<int:year>/<int:sub_id>/tests/', methods=['GET', 'POST'])
+def get_test(stu_id, year, sub_id):
     #  מחזיר רשימת מבחנים
-    pass
+    if request.method == 'GET':
+        return jsonify(temp_school_db_module.get_tests(stu_id, year, sub_id))
+    # מוסיף מבחן
+    if request.method == 'POST':
+        tst_gr = request.form
+        grade = tst_gr["grade"]
+        class_ = tst_gr["class"]
+        return temp_school_db_module.add_test(stu_id, sub_id, grade, year, class_)
 
 
-@app.route('/students/<int:stu_id>/<int:year>/<int:sub_id>/', methods=['GET'])
+@app.route('/students/<int:stu_id>/<int:year>/<int:sub_id>/avg/', methods=['GET'])
 def get_avg(stu_id, year, sub_id):
     # ממוצע של תלמיד במקצוע מסויים
-    pass
-
-
-@app.route('/students/<int:stu_id>/<int:year>/<int:sub_id>/', methods=['POST'])
-def add_test(stu_id, year, sub_id):
-    pass
+    return temp_school_db_module.get_avg(stu_id, year, sub_id)
 
 
 @app.route('/students/<int:stu_id>/<int:year>/', methods=['GET'])
 def get_subjects(stu_id, year):
     # מחזיר רשימת מקצועות שאותו תלמיד למד
-    pass
+    return jsonify(temp_school_db_module.subject_per_year(stu_id, year))
 
 
 @app.route('/students/<int:stu_id>/<int:year>/all_sub_avg/', methods=['GET'])
 def get_avg_of_year(stu_id, year):
     # ממוצע כללי של כל המקצועות
-    pass
+    return jsonify(temp_school_db_module.avg_all_grade(stu_id, year))
 
 
 @app.route('/students/<int:stu_id>/<int:year>/tests/', methods=['GET'])
 def get_subjects_tests(stu_id, year):
     # מחזיר רשימת מבחנים שאותו תלמיד נבחן
-    pass
+    return jsonify(temp_school_db_module.grade_per_year(stu_id, year))
 
 
 @app.route('/students/<int:stu_id>/<int:year>/<int:sub_id>/', methods=['GET'])
 def get_avg_by_sub(stu_id, year, sub_id):
     # מחזיר ממוצע לפי מקצוע
-    pass
+    return jsonify(temp_school_db_module.avg_sub(stu_id, year, sub_id))
 
 
-@app.route('/students/<int:stu_id>/<int:year>/<int:sub_id>/<int:test_id>/', methods=['GET', 'POST'])
-def stu_by_year_sub_test(stu_id, year, sub_id):
+@app.route('/students/<int:stu_id>/<int:year>/<int:sub_id>/<int:test_id>/', methods=['GET'])
+def stu_by_year_sub_test(stu_id, year, sub_id, test_id):
     # מחזיר מבחן ספציפי
     if request.methods == 'GET':
-        pass
-    if request.methods == 'POST':
-        pass
-    pass
+        return jsonify(temp_school_db_module.stu_by_year_sub_test(stu_id, year, sub_id, test_id))
 
 
 @app.route('/students/<int:stu_id>/<int:year>/<int:sub_id>/<int:test_id>/', methods=['PUT'])
-def get_subjects_test(stu_id, year, sub_id, test_id):
+def updte_by_test_id(stu_id, year, sub_id, test_id):
     # מעדכן מבחן ספציפי
     pass
 

@@ -61,29 +61,29 @@ class Student:
             raise ValueError
 
 
-def get_all_stu():
-    l = []
-    for stu in con.execute('SELECT id,name,class FROM students'):
-        stu = dict(stu)
-        l.append(stu)
-    return l
-
-
-def get_stu(num):
-    sele = con.execute('SELECT * FROM students WHERE id = ?',(num,))
-    sele = sele.fetchone()
-    if sele:
-        return dict(sele)
-    else:
-        raise ValueError ('There is no such student')
-
-
-def add_stu(name, m_z, birthday, class_stu=1):
-    new_ob = Student(name, m_z, birthday, class_stu)
-    stud = con.execute('INSERT INTO students(name,t_z,birthday,class)VALUES (?,?,?,?)',(new_ob.name,new_ob.m_z,new_ob.birthday,new_ob.class_stu))
-    idd = stud.lastrowid
-    con.commit()
-    return get_stu(idd)
+# def get_all_stu():
+#     l = []
+#     for stu in con.execute('SELECT id,name,class FROM students'):
+#         stu = dict(stu)
+#         l.append(stu)
+#     return l
+#
+#
+# def get_stu(num):
+#     sele = con.execute('SELECT * FROM students WHERE id = ?',(num,))
+#     sele = sele.fetchone()
+#     if sele:
+#         return dict(sele)
+#     else:
+#         raise ValueError ('There is no such student')
+#
+#
+# def add_stu(name, m_z, birthday, class_stu=1):
+#     new_ob = Student(name, m_z, birthday, class_stu)
+#     stud = con.execute('INSERT INTO students(name,t_z,birthday,class)VALUES (?,?,?,?)',(new_ob.name,new_ob.m_z,new_ob.birthday,new_ob.class_stu))
+#     idd = stud.lastrowid
+#     con.commit()
+#     return get_stu(idd)
 
 
 def remove_stu(num):
@@ -114,11 +114,72 @@ def update_stu(num, changes):
     return get_stu(num)
 
 
-def subject_per_year(s_id, year):
-    pass
+# מחזיר את כל הפרטים עבור תלמיד מסוים לפי האי די שלו
+def get_stu(num):
+    sele = con.execute('SELECT * FROM students WHERE id = ?', (num,))
+    sele = sele.fetchone()
+    if sele:
+        return dict(sele)
+    else:
+        raise ValueError('There is no such student')
 
 
- # הפונקציה הבאה מקבלת שנה מסוימת ו- id של תלמיד מסוים,ומחזירה טפל עם שמות מקצוע והציון של אותו תלמיד בהם
+# מוסיף תלמידים לבית הספר,בתנאים הנדרשים
+def add_stu(name, m_z, birthday, class_stu=1):
+    new_ob = Student(name, m_z, birthday, class_stu)
+    stud = con.execute(
+        'INSERT INTO students(name,t_z,birthday,class)VALUES (?,?,?,?)',
+        (new_ob.name, new_ob.m_z, new_ob.birthday, new_ob.class_stu))
+    idd = stud.lastrowid
+    con.commit()
+    return get_stu(idd)
+
+
+# מחזיר שמות אי די וכיתה של כל ההתלמידים
+def get_all_stu():
+    l = []
+    for stu in con.execute('SELECT id,name,class FROM students'):
+        stu = dict(stu)
+        l.append(stu)
+    return l
+
+
+# מחזיר רשימת שנים בהם למד התלמיד בבית הספר
+def get_students_year(id_stu):
+    sele = c.execute(
+        """SELECT year FROM students_grade WHERE id_student = ?""",
+        (id_stu,)).fetchall()
+
+    return list(set([i[0] for i in sele]))
+
+
+# מחזיר רשימת מקצועות שלמד התלמיד בשנה זו
+def subject_per_year(id_stu, year):
+    sele = c.execute("""SELECT subject FROM subjects INNER JOIN
+                        students_grade ON id_subject = subjects.id WHERE
+                        id_student = ? AND year = ?""",
+                     (id_stu, year)).fetchall()
+    if sele:
+        return list(set([i[0] for i in sele]))
+    raise ValueError(
+        'No record for student:{} in year:{}'.format(id_stu, year))
+
+
+def avg_all_grade(id_stu, year):
+    sele = c.execute(
+        """SELECT AVG(grade) FROM students_grade WHERE id_student = ? AND year = ? """
+        , (id_stu, year)).fetchone()[0]
+    return round(sele, 2)
+
+
+def avg_sub(id_stu, year, id_sub):
+    sele = c.execute(
+        """SELECT AVG(grade) FROM students_grade WHERE id_student = ? AND year = ? AND id_subject = ?"""
+        , (id_stu, year, id_sub)).fetchone()[0]
+    return round(sele, 2)
+
+
+# הפונקציה הבאה מקבלת שנה מסוימת ו- id של תלמיד מסוים,ומחזירה טפל עם שמות מקצוע והציון של אותו תלמיד בהם
 
 
 def grade_per_year(id_stu, year):
@@ -133,7 +194,7 @@ def grade_per_year(id_stu, year):
 
 # הפונקציה הבאה מקבלת שנה מסוימת ומחזירה list of tupples שבכל טאפל יש id של תלמיד,מקצוע,וציון
 
-def all_gread_year(year):
+def all_grade_year(year):
     lst = []
     sele = con.execute("""SELECT subject,grade,id_student FROM subjects INNER JOIN
                          students_grade ON id_subject = subjects.id WHERE
@@ -143,6 +204,20 @@ def all_gread_year(year):
     if lst:
         return lst
     raise ValueError('No record for year:{}'.format(year))
+
+
+def get_tests(id_stu, year, id_sub):
+    pass
+
+def stu_by_year_sub_test(stu_id, year, sub_id, test_id):
+    pass
+
+def get_avg(id_stu, year, id_sub):
+    pass
+
+
+def add_test(id_stu, id_sub, grade, year, class_):
+    pass
 
 
 # הפונקציה הבאה מחזירה מקבלת id של תלמיד ןמחזירה את השנים שבהם למד(נבחן)בביה"ס
