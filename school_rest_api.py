@@ -18,12 +18,11 @@ def welcome_message():
 
 
 @app.route('/students/',methods=['GET', 'POST'])
-def all_the_students():
-    # מחזיר שמות כל התלמידים ת"ז וכיתה
+def students():
+    # מחזיר שמות כל התלמידים id וכיתה
     if request.method == 'GET':
         lst = temp_school_db_module.get_all_stu()
         return jsonify(lst)
-        # return jsonify(lst)
     # מוסיף תלמיד למערכת
     if request.method == 'POST':
         json_dict = json.loads(request.form)
@@ -31,37 +30,33 @@ def all_the_students():
         t_z = json_dict['t_z']
         class_ = json_dict['class']
         birthday = json_dict['birthday']
-        return school_module.add_student([name, t_z, class_, birthday])
-    pass
+        return temp_school_db_module.add_stu(*(name, t_z, class_, birthday))
 
 
-# @app.route('/students/',methods=['POST'])
-# def add_student(name, t_z, class_):
-#     #     מוסיף תלמיד למסד נתונים ומחזיר את המילים WHELCOM
-#     pass
-
-
-@app.route('/students/<int:stu_id>/',methods=['GET', 'PUT'])
-def get_student(stu_id):
+@app.route('/students/<int:stu_id>/',methods=['GET', 'DELETE'])
+def student(stu_id):
     #     מחזיר את רשימת שנות לימודיו של אותו תלמיד
     if request.method == 'GET':
         lst = school_module.get_years_student(stu_id)
-        return jsonify(lst)
-    if request.method == 'PUT':
-        pass
-    pass
+        return jsonify(lst[0])
+    # מסיר תלמיד
+    if request.method == 'DELETE':
+        return jsonify(temp_school_db_module.remove_stu(stu_id))
 
 
 @app.route('/students/<int:stu_id>/', methods=['PUT'])
 def update_student(stu_id):
     #     מעדכן את נתוניו של תלמיד מסויים
-    pass
+    json_dict = request.get_json()
+    temp_school_db_module.update_stu(stu_id, json_dict)
+    return jsonify('updated!')
 
 
 @app.route('/students/<int:stu_id>/<int:year>/', methods=['GET'])
-def get_subject(year):
+def get_subjects_by_year(stu_id, year):
     #   מחזיר רשימת מקצועות והID שלהם לאותה שנה
-    pass
+    fetch = temp_school_db_module.subject_per_year(stu_id, year)
+    return jsonify(fetch)
 
 
 @app.route('/students/<int:stu_id>/<int:year>/<int:sub_id>/', methods=['GET'])
@@ -113,12 +108,6 @@ def stu_by_year_sub_test(stu_id, year, sub_id):
     if request.methods == 'POST':
         pass
     pass
-
-
-# @app.route('/students/<int:stu_id>/<int:year>/<int:sub_id>/<int:test_id>/', methods=[])
-# def post_test_by_sub(stu_id, year, sub_id, test_id):
-#     # מוסיף מבחן ספציפי
-#     pass
 
 
 @app.route('/students/<int:stu_id>/<int:year>/<int:sub_id>/<int:test_id>/', methods=['PUT'])
