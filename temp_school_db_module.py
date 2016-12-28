@@ -256,6 +256,6 @@ def stu_subject_few_years(id_stu, id_sub, years):
     return lst
 
 
-# print(stu_subject(1,2,2009))
+# print(stu_subject(1,1,2008))
 # print(subject_per_years(1,(2015, 2016)))
 # print(avg_all_grade_few_years(1,(2015, 2016)))
